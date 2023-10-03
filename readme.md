@@ -10,9 +10,10 @@
 - Technologien
     - Webserver/Packetmanager/bundler: bun (https://bun.sh)
     - Database: redis (https://redis.io)
-- Aufteilung:
-    - Login und Profil (bzw. authController): @mag
-    - Tickets und Ticket (bzw. ticketController): @dho
+
+### Aufteilung:
+- Login und Profil (bzw. authController): @mag
+- Tickets und Ticket (bzw. ticketController): @dho
 
 ### OWAS-Flaws
 - SQL injection (SQL Injection)
