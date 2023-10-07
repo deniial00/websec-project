@@ -9,6 +9,16 @@ services:
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - db:/data
+  #server: #still needs setup - not working
+    #container_name: server
+    #image: oven/bun:latest
+    #restart: always
+    #ports:
+      #- '443:8080'
+    #volumes: 
+      #- package.json:./
+      #- bun.lockb:./
+      #- src:./
 volumes:
   db:
     driver: local
