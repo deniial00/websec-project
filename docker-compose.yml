@@ -1,7 +1,16 @@
 version: '3.8'
 services:
+  proxy:
+    container_name: websec-proxy
+    image: nginx:latest
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./conf/default.conf:/etc/nginx/conf.d/default.conf
   db:
-    container_name: db
+    container_name: websec-db
     image: redis:latest
     restart: always
     ports:
@@ -9,20 +18,36 @@ services:
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - db:/data
-  server:
-    container_name: server
+  backend:
+    container_name: websec-backend
     image: oven/bun:latest
     restart: always
-    ports:
-      - '443:8080'
+    depends_on:
+      - proxy
     working_dir: /app
     command: >
       sh -c "bun install &&
              bun run /app/server.js"
     volumes: 
-      - ./server:/app
+      - ./backend:/app
+  frontend:
+    container_name: websec-frontend
+    image: node:latest
+    working_dir: /app
+    command: >
+      sh -c "npm install &&
+             npm run dev --host"
+    volumes:
+      - ./frontend:/app
+
+
+
 volumes:
+  proxy:
+    driver: local
   db:
     driver: local
-  server:
+  frontend:
+    driver: local
+  backend:
     driver: local
