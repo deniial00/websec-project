@@ -22,21 +22,14 @@ services:
     container_name: websec-backend
     image: oven/bun:latest
     restart: always
-<<<<<<< HEAD
-    depends_on:
-      - proxy
-    working_dir: /app
-=======
     ports:
       - '443:8080'
     working_dir: /api
->>>>>>> baa5270 (changed)
     command: >
       sh -c "bun install &&
              bun run /api/server.js"
     volumes: 
-<<<<<<< HEAD
-      - ./backend:/app
+      - ./server:/api
   frontend:
     container_name: websec-frontend
     image: node:latest
@@ -46,15 +39,6 @@ services:
              npm run dev --host"
     volumes:
       - ./frontend:/app
-
-
-
-=======
-      - ./server:/api
-  # app:
-  #   container_name: app
-  #   image: 
->>>>>>> baa5270 (changed)
 volumes:
   proxy:
     driver: local
