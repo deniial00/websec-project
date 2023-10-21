@@ -8,18 +8,21 @@ export class NavbarComponent extends LitElement {
 	@property({ type: Boolean })
 	is_logged_in: boolean | undefined;
 
-	private _change_login_status = () => {
+	private _changeLoginStatus = () => {
 		this.dispatchEvent(new CustomEvent('login-status-changed', {
 			detail: { is_logged_in: !this.is_logged_in },
 			bubbles: true,
 			composed: true,
-			}));
+		}));
 	}
 
-	private _handleChangePage(e: Event) {
-		// funkt nd - aber so hätt ichs ma vorgestellt. dann in app auf das event listenen
-		//const pageEvent = new CustomEvent('changed-page',{ {currentPage: 'test'}, composed: true, cancelable: true });
-		//this.dispatchEvent(pageEvent);
+	private _handleChangePage = (new_page: String) => {
+		console.log("handleChnagePage: " + new_page);
+		this.dispatchEvent(new CustomEvent('page-changed', {
+			detail: { new_page: new_page },
+			cancelable: true,
+			composed: true,
+		}));
 	}
 
 	static styles = css`
@@ -41,10 +44,10 @@ export class NavbarComponent extends LitElement {
 
 	render() {
 		return html`
-			<div @click="${this._handleChangePage}">Tickets</div>
-			<div @click="${this._handleChangePage}">Profile</div>
+			<div @click="${() => {this._handleChangePage("tickets-page");}}">Tickets</div>
+			<div @click="${() => {this._handleChangePage("profile-page");}}">Profile</div>
 			${this.is_logged_in ? html`
-				<div @click="${this._handleChangePage}">Logout</div>
+				<div @click="${() => {this._handleChangePage("login-page"); this._changeLoginStatus();}}">Logout</div>
 			`: html``}
 			`
 	}
