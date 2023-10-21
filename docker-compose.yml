@@ -13,6 +13,7 @@ services:
     container_name: websec-db
     image: redis:latest
     restart: always
+    working_dir: /data
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
@@ -22,23 +23,21 @@ services:
     container_name: websec-backend
     image: oven/bun:latest
     restart: always
-    ports:
-      - '443:8080'
-    working_dir: /api
+    working_dir: /server
     command: >
       sh -c "bun install &&
-             bun run /api/server.js"
+             bun run /server/index.ts"
     volumes: 
-      - ./server:/api
+      - ./server:/server
   frontend:
     container_name: websec-frontend
     image: node:latest
     working_dir: /app
     command: >
       sh -c "npm install &&
-             npm run dev --host"
+             npm run docker"
     volumes:
-      - ./frontend:/app
+      - ./app:/app
 volumes:
   proxy:
     driver: local
