@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lit": "^2.7.6"
+    "lit": "^2.7.6",
+    "redis": "^4.6.10"
   },
   "devDependencies": {
     "typescript": "^5.0.2",
