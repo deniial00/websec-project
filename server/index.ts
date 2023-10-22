@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 
 
 const authController = require('./src/auth-controller');
+import DbAccess from './src/data-access'
 const app = express();
 const port = 8000;
 
@@ -12,13 +13,11 @@ app.use(cors());
 app.use(bodyParser.json())
 
 app.get("/api", async (req, res) => {
-  const client: MongoClient = new MongoClient('mongodb://database:27017/websec');
-  const db = client.db('websec');
+  const db = await DbAccess.connection.collection('tickets').findOne();
 
-  const ret = await db.collection('tickets').findOne();
-
-  console.log(ret);
-  res.send("Hello World!" + JSON.stringify(ret));
+  // const ret = await db.collection('tickets').findOne();
+  // console.log(ret);
+  res.send("Hello World!" + JSON.stringify(db));
 });
 
 app.post("/api/signup", async (req, res) => {
