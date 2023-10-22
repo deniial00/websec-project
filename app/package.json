@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@lit/context": "^1.0.0",
+    "@lit/task": "^1.0.0",
+    "cors": "^2.8.5",
     "lit": "^2.7.6",
     "redis": "^4.6.10",
     "uuid": "^9.0.1"
