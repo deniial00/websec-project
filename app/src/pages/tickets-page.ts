@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { Task } from '@lit/Task'
 
 import { Ticket } from '../interfaces/ticket-interface'
 
@@ -73,15 +74,17 @@ export class TicketsPage extends LitElement {
 
 	constructor() {
 		super()
-		this.activeTicket = this.tickets[0].uuid
+		this.loadTickets.run();
+		this.activeTicket = this.tickets[0].uuid;
+		this.userId = '1';
 	}
 
 	// mega praktisch: wenn man das als get definiert, dann wird das beim binding nicht als function angesehen und führt dann zu keinem type mismatch (() => obj != obj)
-	get getActiveTicket() : Ticket{
+	get getActiveTicket() : Ticket {
 		const ticket = this.tickets.find( ticket => ticket.uuid === this.activeTicket)
 		
 		if (ticket == undefined)
-			throw new Error("Ticket not found")
+			return
 		
 		return ticket
 	}
@@ -89,6 +92,16 @@ export class TicketsPage extends LitElement {
 	handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
 		this.activeTicket = e.detail.activeTicket;
 	}
+
+	private loadTickets = new Task(this, {
+		task: async ([], {signal}) => {
+			const response = await fetch(`http://localhost/api?collection=users&operation=get`, {signal});
+			if (!response.ok) { throw new Error(response.status); }
+			// return response.json() as Ticket;
+			this.tickets = response;
+		},
+		args: () => [this.userId]
+	});
 
 	render() {
 		return html`
