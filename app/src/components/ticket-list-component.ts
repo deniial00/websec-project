@@ -16,7 +16,7 @@ export class TicketList extends LitElement {
 	}
 
 	handleTicketClick(e: Event) {
-		const target = e.target as HTMLDivElement;
+		const target = e.currentTarget as HTMLDivElement;
 		this.dispatchEvent(
 			new CustomEvent('active-ticket-changed',{
 				detail: { activeTicket: target.dataset.uuid },
@@ -31,23 +31,32 @@ export class TicketList extends LitElement {
 			return html`<div>Keine Tickets verfügbar</div>`;
 		}
 
-		console.log(this.tickets);
-
-
 		return html`
 			<div>Deine Tickets</div>
 			${map(this.tickets, ticket => 
 				html`
-				<div @click="${this.handleTicketClick}" data-ticket-uuid="${ticket.uuid}">
-					${ticket.title}
-					${ticket.author.name}
+				<div 
+					class="ticket-list-element"
+					@click="${this.handleTicketClick}"
+					data-uuid="${ticket.uuid}"
+					role="button"
+				>
+					<div>${ticket.title}</div>
+					<div>${ticket.author.name}</div>
 				</div>`
 			)}
 		`
 	}
 
 	static styles = css`
- 
+		.ticket-list-element {
+			background-color: grey;
+			border-color: lightgray;
+			border-radius: 0.3em;
+			margin: 0.5em 0 0.5em 0;
+			padding: 0.5em;
+			cursor: pointer;
+		}
 	`
 }
 
