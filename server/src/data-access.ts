@@ -1,30 +1,18 @@
-// import { RedisClientType, createClient } from 'redis';
+import { Db, MongoClient } from 'mongodb';
 
-// class RedisClient {
+class DbAccess {
+	private static db: Db | undefined;
 
-//     private client: RedisClientType;
-//     private host: string;
-//     private port: number;
+	static get connection(): Db {
+		if (!this.db) {
+			const client: MongoClient = new MongoClient('mongodb://database:27017/');
+			this.db = client.db('websec');
+		}
+		if (!this.db) {
+			throw new Error("Database connection could not be established");
+		}
+		return this.db;
+	}
+}
 
-//     constructor(host: string, port: number) {
-//         this.client = null;
-//         this.host = host;
-//         this.port = port;
-//     }
-
-//     async connection(): Promise<RedisClientType>{
-//         if (this.client === null) {
-//             this.client = createClient({ this.host, this.port });
-//         }
-
-//         await this.client.connect();
-
-//         return client;
-//     }
-// }
-
-// // export const client: RedisClientType = createClient({
-// //     url: 'redis://websec-db:6379'
-// // });
-
-// export default new RedisClient();
+export default DbAccess;
