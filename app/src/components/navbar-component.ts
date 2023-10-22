@@ -40,6 +40,7 @@ export class NavbarComponent extends LitElement {
       align-items: center; /* vertical alignment of divs in parent */
       margin-left: 0.2em;
       margin-right: 0.2em;
+      cursor: pointer; /* damit es wie ein link wirkt */
     }
   `;
 

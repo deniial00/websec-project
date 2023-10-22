@@ -8,15 +8,16 @@ services:
       - '80:80'
       - '443:443'
     volumes:
-      - ./conf/default.conf:/etc/nginx/conf.d/default.conf
+      - ./conf/nginx.conf:/etc/nginx/conf.d/default.conf
   database:
     container_name: websec-db
-    image: redis:latest
-    restart: always
-    working_dir: /data
+    image: mongo:latest
     ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning
+      - '27017:27017'
+    volumes:
+      - ./data:/data/db
+    networks:
+      - database
   backend:
     container_name: websec-backend
     image: oven/bun:latest
@@ -24,9 +25,14 @@ services:
     working_dir: /server
     command: >
       sh -c "bun install &&
-             bun --hot /server/index.ts"
+             bun --hot index.ts"
+    depends_on:
+      - database
     volumes: 
       - ./server:/server
+    networks:
+      - default
+      - database
   frontend:
     container_name: websec-frontend
     image: node:latest
@@ -39,9 +45,12 @@ services:
 volumes:
   proxy:
     driver: local
-  db:
+  database:
     driver: local
   frontend:
     driver: local
   backend:
     driver: local
+networks:
+  database: 
+    driver: bridge

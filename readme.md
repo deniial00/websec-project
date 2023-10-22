@@ -15,7 +15,7 @@
 - Login und Profil (bzw. authController): @mag
 - Tickets und Ticket (bzw. ticketController): @dho
 
-### OWAS-Flaws
+### OWASP-Flaws
 - SQL injection (SQL Injection)
 - Login über GET => Parameter auslesbar (Insecure Design)
 - Bei Ticket-Aufruf wird nicht auf Berechtigung gechecked (Insecure design)
