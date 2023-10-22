@@ -1,12 +1,11 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import {literal} from 'lit/static-html.js';
+import { when } from 'lit/directives/when.js';
 
 import '../components/navbar-component'
 import './tickets-page'
 import './profile-page'
 import './login-page'
-import { when } from 'lit/directives/when.js';
 
 @customElement('app-page')
 export class App extends LitElement {
@@ -47,7 +46,7 @@ export class App extends LitElement {
 		this.requestUpdate();
 	}
 
-
+	// aus irgendeinem Grund ist die Navbar auf der linken Seite bei <tickets-page></tickets-page>
 	render() {
 		return html`
 			<header>
