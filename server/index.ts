@@ -1,14 +1,16 @@
-import express from "express";
-import TicketController from "./src/ticket-controller";
+const express = require('express');
+import { MongoClient } from 'mongodb';
 
 const app = express();
 const port = 80;
 
 app.get("/api", async (req, res) => {
-  console.log("incomming");
-  const c_ticket = new TicketController();
-  const res1 = c_ticket.test();
-  res.send("Hello World!"+res1);
+  const client: MongoClient = new MongoClient('mongodb://database:27017/websec');
+  const db = client.db('websec');
+
+  const ret = await db.collection('tickets').findOne();
+  console.log(ret);
+  res.send("Hello World!" + JSON.stringify(ret));
 });
 
 app.listen(port, () => {
