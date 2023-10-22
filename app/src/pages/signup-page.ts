@@ -3,8 +3,8 @@ import { customElement } from 'lit/decorators.js'
 import { consume } from '@lit/context';
 import { authContext } from '../contexts/auth-context';
 
-@customElement('login-page')
-export class LoginPage extends LitElement {
+@customElement('signup-page')
+export class SignupPage extends LitElement {
 
 	@consume({ context: authContext, subscribe: true })
 	is_logged_in: boolean | undefined;
@@ -17,7 +17,7 @@ export class LoginPage extends LitElement {
 	:host div {
 	}
 
-	.signup_link {
+	.login_link {
 		cursor: pointer;
 		color: darkblue;
 		text-decoration: underline;
@@ -40,7 +40,7 @@ export class LoginPage extends LitElement {
 		}));
 	}
 
-	private _login = () => {
+	private _signup = () => {
 		//hier request ans backend schicken
 			//-> wenn erfolgreich
 			this._changeLoginStatus();
@@ -51,29 +51,32 @@ export class LoginPage extends LitElement {
 
 	render() {
 		return html`
-			<div class="login-form">
-				<form>
-					<h1>Login</h1>
-					<div>
-						<div>
-							<input type="email" placeholder="Email" autocomplete="nope">
-						</div>
-						<div>
-							<input type="password" placeholder="Password" autocomplete="new-password">
-						</div>
-						Not a member? <span class="signup_link" @click=${() => {this._handleChangePage("signup-page");}}>Sign up</span>
+		<div class="signup-form">
+			<form>
+				<h1>Sign up</h1>
+				<div class="content">
+					<div class="input-field">
+						<input type="email" placeholder="Email" autocomplete="nope">
 					</div>
-					<div>
-						<button @click=${this._login}>Login</button>
+					<div class="input-field">
+						<input type="password" placeholder="Password" autocomplete="new-password">
 					</div>
-				</form>
-			</div>
+					<div class="input-field">
+						<input type="password" placeholder="Confirm Password" autocomplete="new-password">
+					</div>
+					Already have an Account? <span class="login_link" @click=${() => {this._handleChangePage("login-page");}}>Login</span>
+					</div>
+				<div class="action">
+					<button @click=${this._signup}>Sign up</button>
+				</div>
+			</form>
+		</div>
 		`
 	}
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'login-page': LoginPage
+		'signup-page': SignupPage
 	}
 }

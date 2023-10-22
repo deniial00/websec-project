@@ -1,35 +1,30 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { when } from "lit/directives/when.js";
+import { consume } from '@lit/context';
+import { authContext } from '../contexts/auth-context';
 
 @customElement("navbar-component")
 export class NavbarComponent extends LitElement {
 
-  // ich würd das umbauen auf context: https://lit.dev/docs/data/context/
-  @property({ type: Boolean })
-  is_logged_in: boolean | undefined;
+  @consume({ context: authContext, subscribe: true })
+	is_logged_in: boolean | undefined;
 
-  private changeLoginStatus = () => {
-    this.dispatchEvent(
-      new CustomEvent("login-status-changed", {
-        detail: { is_logged_in: !this.is_logged_in },
-        bubbles: true,
-        composed: true,
-      })
-    );
-  };
+  private _changeLoginStatus = () => {
+		this.dispatchEvent(new CustomEvent('login-status-changed', {
+			detail: { is_logged_in: !this.is_logged_in },
+			bubbles: true,
+			composed: true,
+		}));
+	}
 
-  private handleChangePage = (e: Event) => {
-    const target = e.currentTarget as HTMLDivElement;
-    console.log("handleChnagePage: ", target.dataset.nav);
-    this.dispatchEvent(
-      new CustomEvent("page-changed", {
-        detail: { new_page: target.dataset.nav },
-        cancelable: true,
-        composed: true,
-      })
-    );
-  };
+	private _handleChangePage = (new_page: String) => {
+		this.dispatchEvent(new CustomEvent('page-changed', {
+			detail: { new_page: new_page },
+			cancelable: true,
+			composed: true,
+		}));
+	}
 
   static styles = css`
     :host {
@@ -49,25 +44,18 @@ export class NavbarComponent extends LitElement {
   `;
 
   render() {
-    return html`
-      <div
-        data-nav="tickets-page" 
-        @click="${this.handleChangePage}"
-      >
-        Tickets
-      </div>
-      <div
-        data-nav="profile-page"
-        @click="${this.handleChangePage}"
-      >
-        Profile
-      </div>
-      ${when(this.is_logged_in, 
-        () => html`<div @click="${this.changeLoginStatus}">Logout</div>`
-      )}  
-    `;
-  }
+		return html`
+			<div @click="${() => {this._handleChangePage("tickets-page");}}">Tickets</div>
+			<div @click="${() => {this._handleChangePage("profile-page");}}">Profile</div>
+			${when(this.is_logged_in, 
+        () => html`<div @click="${() => {this._handleChangePage("login-page"); this._changeLoginStatus();}}">Logout</div>`
+        )
+      }
+    `
+	}
 }
+
+
 
 declare global {
   interface HTMLElementTagNameMap {

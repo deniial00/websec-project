@@ -1,27 +1,32 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { when } from 'lit/directives/when.js';
+import { provide } from '@lit/context';
+import { authContext } from '../contexts/auth-context';
+
 
 import '../components/navbar-component'
 import './tickets-page'
 import './profile-page'
+import './signup-page'
 import './login-page'
+
 
 @customElement('app-page')
 export class App extends LitElement {
 
-	@property({ type: Boolean })
-	is_logged_in = true;
+	@provide({ context: authContext })
+	is_logged_in = false;
 
 	@property({type: Array})
 	available_pages: Record<string, TemplateResult> = {
-		"login-page": html `<login-page></login-page>`,
+		"signup-page": html `<signup-page @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></signup-page>`,
+		"login-page": html `<login-page  @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></login-page>`,
 		"tickets-page": html `<tickets-page></tickets-page>`,
 		"profile-page": html `<profile-page></profile-page>`,
 	};
 
-	@property({ type: Object })
-	selected_page = this.available_pages["tickets-page"];
+	@property({ type: String })
+	selected_page  = this.is_logged_in ? this.available_pages["tickets-page"] : this.available_pages["login-page"];
 
 	static styles = css`
 		:host {
@@ -46,21 +51,15 @@ export class App extends LitElement {
 		this.requestUpdate();
 	}
 
-	// aus irgendeinem Grund ist die Navbar auf der linken Seite bei <tickets-page></tickets-page>
+
 	render() {
 		return html`
 			<header>
-				<navbar-component 
-					.is_logged_in="${this.is_logged_in}"
-					@login-status-changed="${this.onLoginStatusChanged}"
-					@page-changed="${this.onPageChanged}"
+				<navbar-component  @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"
 				></navbar-component>
 			</header>
 			<div class="main-content">
-				${when(this.is_logged_in, 
-					() => html`${this.selected_page}`,
-					() => html`<login-page></login-page>`
-				)}
+				${html `${this.selected_page}`}
 			</div>
 		`
 	}
