@@ -34,7 +34,7 @@ export class TicketsPage extends LitElement {
 			status: 'open'
 		}
 	]
-
+	
 	@property({type: String})
 	activeTicket = ''
 
@@ -55,22 +55,19 @@ export class TicketsPage extends LitElement {
 	}
 
 	render() {
-		console.log(this.tickets)
 		return html`
-			<div class="splitview">
-				<ticket-list .tickets='${this.tickets}'></ticket-list>
-				<ticket-detail .ticket='${this.getActiveTicket}'></ticket-detail>
-			</div>
+			<ticket-list .tickets='${this.tickets}'></ticket-list>
+			<ticket-detail .ticket='${this.getActiveTicket}'></ticket-detail>
 		`
 	}
 
 	static styles = css`
-		.splitview {
+		:host {
 			display: flex;
 			flex-direction: row;
 		}
-		.splitview > * {
-			flex: 1;
+		:host > * {
+			flex: 1; // gleiche breite
 		}
 	`;
 }

@@ -50,7 +50,11 @@ export class App extends LitElement {
 	render() {
 		return html`
 			<header>
-				<navbar-component .is_logged_in="${this.is_logged_in}" @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></navbar-component>
+				<navbar-component 
+					.is_logged_in="${this.is_logged_in}"
+					@login-status-changed="${this.onLoginStatusChanged}"
+					@page-changed="${this.onPageChanged}"
+				></navbar-component>
 			</header>
 			<div class="main-content">
 				${when(this.is_logged_in, 

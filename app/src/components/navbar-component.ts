@@ -4,6 +4,8 @@ import { when } from "lit/directives/when.js";
 
 @customElement("navbar-component")
 export class NavbarComponent extends LitElement {
+
+  // ich würd das umbauen auf context: https://lit.dev/docs/data/context/
   @property({ type: Boolean })
   is_logged_in: boolean | undefined;
 
@@ -48,10 +50,16 @@ export class NavbarComponent extends LitElement {
 
   render() {
     return html`
-      <div data-nav="tickets-page" @click="${this.handleChangePage}">
+      <div
+        data-nav="tickets-page" 
+        @click="${this.handleChangePage}"
+      >
         Tickets
       </div>
-      <div data-nav="profile-page" @click="${this.handleChangePage}">
+      <div
+        data-nav="profile-page"
+        @click="${this.handleChangePage}"
+      >
         Profile
       </div>
       ${when(this.is_logged_in, 
