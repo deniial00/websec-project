@@ -4,7 +4,6 @@ import {literal} from 'lit/static-html.js';
 
 import '../components/navbar-component'
 import './tickets-page'
-import './ticket-page'
 import './profile-page'
 import './login-page'
 
@@ -18,11 +17,10 @@ export class App extends LitElement {
 	available_pages: Record<string, TemplateResult> = {
 		"login-page": html `<login-page></login-page>`,
 		"tickets-page": html `<tickets-page></tickets-page>`,
-		"ticket-page": html `<ticket-page></ticket-page>`,
 		"profile-page": html `<profile-page></profile-page>`,
 	};
 
-	@property({ type: String })
+	@property({ type: Object })
 	selected_page = this.available_pages["tickets-page"];
 
 	static styles = css`

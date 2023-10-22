@@ -10,8 +10,7 @@ export class ProfilePage extends LitElement {
 
 	render() {
 		return html`
-			<div>testy</div>
-			<div>testy</div>
+			<div>PROFILE</div>
 		`
 	}
 

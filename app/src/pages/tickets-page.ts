@@ -10,8 +10,7 @@ export class TicketsPage extends LitElement {
 
 	render() {
 		return html`
-			<div>testy</div>
-			<div>testy</div>
+			<div>TICKETS LIST</div>
 		`
 	}
 
