@@ -40,13 +40,35 @@ export class LoginPage extends LitElement {
 		}));
 	}
 
-	private _login = () => {
-		//hier request ans backend schicken
-			//-> wenn erfolgreich
-			this._changeLoginStatus();
-			this._handleChangePage("tickets-page");
-			//-> wenn nicht
-			//error
+	private _login = async () => {
+		try {
+			const usernameInput = this.shadowRoot?.getElementById('username') as HTMLInputElement;
+			const passwordInput = this.shadowRoot?.getElementById('password') as HTMLInputElement;
+			const username = usernameInput.value;
+			const password = passwordInput.value;
+		
+			const data = { username, password };
+		
+			const response = await fetch('http://localhost:8000/api/login', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+			  },
+			  body: JSON.stringify({ data }),
+			});
+			const responseBody = await response.json();
+			if (response.ok) {
+				console.log(responseBody.status);
+			  this._changeLoginStatus();
+			  this._handleChangePage("tickets-page");
+			} else {
+			  // TODO: Handle errors
+			  console.log(response.status);
+			  console.error('Login request failed');
+			}
+		  } catch (error) {
+			console.error('Error in _signup:', error);
+		  }
 	}
 
 	render() {
@@ -56,10 +78,10 @@ export class LoginPage extends LitElement {
 					<h1>Login</h1>
 					<div>
 						<div>
-							<input type="email" placeholder="Email" autocomplete="nope">
+							<input id="username" type="text" placeholder="Username" autocomplete="nope">
 						</div>
 						<div>
-							<input type="password" placeholder="Password" autocomplete="new-password">
+							<input id="password" type="password" placeholder="Password" autocomplete="new-password">
 						</div>
 						Not a member? <span class="signup_link" @click=${() => {this._handleChangePage("signup-page");}}>Sign up</span>
 					</div>

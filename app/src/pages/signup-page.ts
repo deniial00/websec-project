@@ -40,14 +40,39 @@ export class SignupPage extends LitElement {
 		}));
 	}
 
-	private _signup = () => {
-		//hier request ans backend schicken
-			//-> wenn erfolgreich
+	private _signup = async () => {
+		try {
+		  const usernameInput = this.shadowRoot?.getElementById('username') as HTMLInputElement;
+		  const emailInput = this.shadowRoot?.getElementById('email') as HTMLInputElement;
+		  const passwordInput = this.shadowRoot?.getElementById('password') as HTMLInputElement;
+		  const username = usernameInput.value;
+		  const email = emailInput.value;
+		  const password = passwordInput.value;
+	  
+		  const data = { username, email, password};
+	  
+		  const response = await fetch('http://localhost:8000/api/signup', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ data }),
+		  });
+		  const responseBody = await response.json();
+		  if (response.ok) {
+			console.log(responseBody.status);
 			this._changeLoginStatus();
 			this._handleChangePage("tickets-page");
-			//-> wenn nicht
-			//error
-	}
+		  } else {
+			// TODO: Handle errors
+			console.log(response.status);
+			console.error('Signup request failed');
+		  }
+		} catch (error) {
+		  console.error('Error in _signup:', error);
+		}
+	  }
+	  
 
 	render() {
 		return html`
@@ -56,13 +81,16 @@ export class SignupPage extends LitElement {
 				<h1>Sign up</h1>
 				<div class="content">
 					<div class="input-field">
-						<input type="email" placeholder="Email" autocomplete="nope">
+						<input id="username" type="text" placeholder="Username" autocomplete="nope">
+					</div>
+					<div class="input-field">
+						<input id="email" type="email" placeholder="Email" autocomplete="nope">
 					</div>
 					<div class="input-field">
 						<input type="password" placeholder="Password" autocomplete="new-password">
 					</div>
 					<div class="input-field">
-						<input type="password" placeholder="Confirm Password" autocomplete="new-password">
+						<input id="password" type="password" placeholder="Confirm Password" autocomplete="new-password">
 					</div>
 					Already have an Account? <span class="login_link" @click=${() => {this._handleChangePage("login-page");}}>Login</span>
 					</div>
