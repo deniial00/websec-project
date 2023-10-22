@@ -6,6 +6,7 @@ import '../components/navbar-component'
 import './tickets-page'
 import './profile-page'
 import './login-page'
+import { when } from 'lit/directives/when.js';
 
 @customElement('app-page')
 export class App extends LitElement {
@@ -53,10 +54,10 @@ export class App extends LitElement {
 				<navbar-component .is_logged_in="${this.is_logged_in}" @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></navbar-component>
 			</header>
 			<div class="main-content">
-			${this.is_logged_in
-				? html `${this.selected_page}`
-				: html`<login-page></login-page>`
-			  }
+				${when(this.is_logged_in, 
+					() => html`${this.selected_page}`,
+					() => html`<login-page></login-page>`
+				)}
 			</div>
 		`
 	}
