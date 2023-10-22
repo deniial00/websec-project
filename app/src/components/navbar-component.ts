@@ -20,7 +20,7 @@ export class NavbarComponent extends LitElement {
   };
 
   private handleChangePage = (e: Event) => {
-    const target = e.target as HTMLDivElement;
+    const target = e.currentTarget as HTMLDivElement;
     console.log("handleChnagePage: ", target.dataset.nav);
     this.dispatchEvent(
       new CustomEvent("page-changed", {
