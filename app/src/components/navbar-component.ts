@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { when } from "lit/directives/when.js";
 
 @customElement("navbar-component")
 export class NavbarComponent extends LitElement {
@@ -53,11 +54,9 @@ export class NavbarComponent extends LitElement {
       <div data-nav="profile-page" @click="${this.handleChangePage}">
         Profile
       </div>
-      ${this.is_logged_in
-        ? html` 
-		<div @click="${this.changeLoginStatus}">Logout</div> `
-        : html`
-		`}
+      ${when(this.is_logged_in, 
+        () => html`<div @click="${this.changeLoginStatus}">Logout</div>`
+      )}  
     `;
   }
 }
