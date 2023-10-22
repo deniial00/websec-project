@@ -34,7 +34,7 @@ export class TicketsPage extends LitElement {
 			status: 'open'
 		}
 	]
-	
+
 	@property({type: String})
 	activeTicket = ''
 
@@ -54,9 +54,17 @@ export class TicketsPage extends LitElement {
 		return ticket
 	}
 
+	handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
+		console.log(e.detail.activeTicket);
+		this.activeTicket = e.detail.activeTicket;
+	}
+
 	render() {
 		return html`
-			<ticket-list .tickets='${this.tickets}'></ticket-list>
+			<ticket-list 
+				.tickets='${this.tickets}'
+				@active-ticket-changed="${this.handleActiveTicketChanged}"
+			></ticket-list>
 			<ticket-detail .ticket='${this.getActiveTicket}'></ticket-detail>
 		`
 	}
@@ -68,6 +76,8 @@ export class TicketsPage extends LitElement {
 		}
 		:host > * {
 			flex: 1; // gleiche breite
+			margin: 0.5em;
+			padding: 0.5em;
 		}
 	`;
 }
