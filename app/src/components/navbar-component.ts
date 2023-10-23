@@ -2,20 +2,21 @@ import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { when } from "lit/directives/when.js";
 import { consume } from '@lit/context';
+import { AuthContextValue } from "../interfaces/auth-interface";
 import { authContext } from '../contexts/auth-context';
 
 @customElement("navbar-component")
 export class NavbarComponent extends LitElement {
 
   @consume({ context: authContext, subscribe: true })
-	is_logged_in: boolean | undefined;
+  auth_context: AuthContextValue | undefined;
 
   private _changeLoginStatus = () => {
-		this.dispatchEvent(new CustomEvent('login-status-changed', {
-			detail: { is_logged_in: !this.is_logged_in },
-			bubbles: true,
-			composed: true,
-		}));
+      this.dispatchEvent(new CustomEvent('login-status-changed', {
+        detail: { is_logged_in: !this.auth_context?.is_logged_in },
+        bubbles: true,
+        composed: true,
+      }));
 	}
 
 	private _handleChangePage = (new_page: String) => {
@@ -48,7 +49,7 @@ export class NavbarComponent extends LitElement {
 		return html`
 			<div @click="${() => {this._handleChangePage("tickets-page");}}">Tickets</div>
 			<div @click="${() => {this._handleChangePage("profile-page");}}">Profile</div>
-			${when(this.is_logged_in, 
+			${when(this.auth_context?.is_logged_in, 
         () => html`<div @click="${() => {this._handleChangePage("login-page"); this._changeLoginStatus();}}">Logout</div>`
         )
       }

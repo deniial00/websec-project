@@ -1,2 +1,5 @@
-import {createContext} from '@lit/context';
-export const authContext = createContext<boolean>('auth-context');
+import { createContext } from '@lit/context';
+import { AuthContextValue } from '../interfaces/auth-interface';
+export const authContext = createContext<AuthContextValue>(Symbol('auth-context'));
+
+ 

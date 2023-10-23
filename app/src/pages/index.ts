@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { provide } from '@lit/context';
+import { ContextProvider } from '@lit/context';
 import { authContext } from '../contexts/auth-context';
 
 
@@ -14,8 +14,11 @@ import './login-page'
 @customElement('app-page')
 export class App extends LitElement {
 
-	@provide({ context: authContext })
-	is_logged_in = false;
+	private auth_context = new ContextProvider(this, authContext, {
+		uuid: undefined,
+		is_logged_in: false,
+		username: undefined
+	  });
 
 	@property({type: Array})
 	available_pages: Record<string, TemplateResult> = {
@@ -26,7 +29,7 @@ export class App extends LitElement {
 	};
 
 	@property({ type: String })
-	selected_page  = this.is_logged_in ? this.available_pages["tickets-page"] : this.available_pages["login-page"];
+	selected_page = this.auth_context.value.is_logged_in ? this.available_pages["tickets-page"] : this.available_pages["login-page"];;
 
 	static styles = css`
 		:host {
@@ -42,7 +45,11 @@ export class App extends LitElement {
 	`
 
 	private onLoginStatusChanged(event: { detail: { is_logged_in: boolean } }) {
-		this.is_logged_in = event.detail.is_logged_in;
+		this.auth_context.setValue({
+			is_logged_in: event.detail.is_logged_in,
+			uuid: undefined,
+			username: undefined
+		})
 		this.requestUpdate();
 	}
 

@@ -1,13 +1,15 @@
 import { LitElement, css, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { consume } from '@lit/context';
+import { AuthContextValue } from '../interfaces/auth-interface';
+
 import { authContext } from '../contexts/auth-context';
 
 @customElement('signup-page')
 export class SignupPage extends LitElement {
 
 	@consume({ context: authContext, subscribe: true })
-	is_logged_in: boolean | undefined;
+	auth_context: AuthContextValue | undefined;
 
 	static styles = css`
 	:host {
@@ -25,11 +27,11 @@ export class SignupPage extends LitElement {
 	`
 
 	private _changeLoginStatus = () => {
-		this.dispatchEvent(new CustomEvent('login-status-changed', {
-			detail: { is_logged_in: !this.is_logged_in },
-			bubbles: true,
-			composed: true,
-		}));
+			this.dispatchEvent(new CustomEvent('login-status-changed', {
+				detail: { is_logged_in: !this.auth_context?.is_logged_in },
+				bubbles: true,
+				composed: true,
+			}));
 	}
 
 	private _handleChangePage = (new_page: String) => {
