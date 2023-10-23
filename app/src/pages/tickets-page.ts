@@ -1,111 +1,110 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { when } from 'lit/directives/when.js';
 
 import { Ticket } from '../interfaces/ticket-interface'
 
 import '../components/ticket-detail-component';
 import '../components/ticket-list-component';
+import '../components/ticket-form-component';
 
 @customElement('tickets-page')
 export class TicketsPage extends LitElement {
 
 	@property({type: Array})
-	tickets: Ticket[] = [
-		{
-			author: {
-				name: 'Daniel Hofbauer',
-				uid: '9363fa7d-1f95-4098-ae62-5981906f2f10'
-			},
-			creationDate: new Date(),
-			title: 'Test ticket',
-			content: 'Reprehenderit aliquip nostrud et velit labore labore. Cupidatat nulla nisi ipsum adipisicing labore anim aliqua aute eiusmod cillum ut aute. Do elit deserunt fugiat officia aliquip sunt esse aute ut sint. Consequat velit ipsum deserunt ea eiusmod tempor laborum ut.',
-			uuid: '550e8400-e29b-41d4-a716-446655440000',
-			status: 'open'
-		},
-		{
-			author: {
-				name: 'Daniel Hofbauer',
-				uid: '9363fa7d-1f95-4098-ae62-5981906f2f10'
-			},
-			creationDate: new Date(),
-			title: 'Test ticket2',
-			content: 'Laborum amet fugiat qui quis non duis sint. Ad id occaecat incididunt reprehenderit sint cupidatat fugiat in officia cupidatat deserunt cillum officia ipsum. Eu officia do deserunt voluptate eiusmod duis tempor laborum ullamco qui reprehenderit. Proident elit duis nostrud ullamco velit. Quis enim laborum commodo ipsum. Eiusmod duis reprehenderit ut mollit reprehenderit.',
-			uuid: '7c7f8ef8-6a10-4f7c-a12e-84a7fffc2f94',
-			status: 'open'
-		},
-		{
-			author: {
-				name: 'Daniel Hofbauer',
-				uid: '9363fa7d-1f95-4098-ae62-5981906f2f10'
-			},
-			creationDate: new Date(),
-			title: 'Neues Test Ticket',
-			content: 'Laborum amet fugiat qui quis non duis sint. Ad id occaecat incididunt reprehenderit sint cupidatat fugiat in officia cupidatat deserunt cillum officia ipsum. Eu officia do deserunt voluptate eiusmod duis tempor laborum ullamco qui reprehenderit. Proident elit duis nostrud ullamco velit. Quis enim laborum commodo ipsum. Eiusmod duis reprehenderit ut mollit reprehenderit.',
-			uuid: '1dd2b63e-f46e-47a9-9e3f-ce61719059ad',
-			status: 'open'
-		},
-		{
-			author: {
-				name: 'Daniel Hofbauer',
-				uid: '9363fa7d-1f95-4098-ae62-5981906f2f10'
-			},
-			creationDate: new Date(),
-			title: 'Das ist kein Test mehr.',
-			content: 'Laborum amet fugiat qui quis non duis sint. Ad id occaecat incididunt reprehenderit sint cupidatat fugiat in officia cupidatat deserunt cillum officia ipsum. Eu officia do deserunt voluptate eiusmod duis tempor laborum ullamco qui reprehenderit. Proident elit duis nostrud ullamco velit. Quis enim laborum commodo ipsum. Eiusmod duis reprehenderit ut mollit reprehenderit.',
-			uuid: '0657865c-03aa-4954-ab65-b70b5f1fa77a',
-			status: 'open'
-		},
-		{
-			author: {
-				name: 'Mario Gussnig',
-				uid: '906d1a9b-1e15-4dd3-9591-c02f8a73890a'
-			},
-			creationDate: new Date(),
-			title: 'Das ist doch wieder ein Test',
-			content: 'Laborum amet fugiat qui quis non duis sint. Ad id occaecat incididunt reprehenderit sint cupidatat fugiat in officia cupidatat deserunt cillum officia ipsum. Eu officia do deserunt voluptate eiusmod duis tempor laborum ullamco qui reprehenderit. Proident elit duis nostrud ullamco velit. Quis enim laborum commodo ipsum. Eiusmod duis reprehenderit ut mollit reprehenderit.',
-			uuid: '0657865c-03aa-4954-ab65-b70b5f1fa77a',
-			status: 'open'
-		}
-	]
+	tickets: Ticket[] = [];
 
-	@property({type: String})
-	activeTicket = ''
+	@property({type: Object})
+	activeTicket: Ticket | undefined;
+
+	@property({type: Boolean})
+	createMode = false;
+
+	userId: string;
 
 	constructor() {
 		super()
-		this.activeTicket = this.tickets[0].uuid
+		this._fetchTickets();
+		this.userId = '1';
 	}
 
-	// mega praktisch: wenn man das als get definiert, dann wird das beim binding nicht als function angesehen und führt dann zu keinem type mismatch (() => obj != obj)
-	get getActiveTicket() : Ticket{
-		const ticket = this.tickets.find( ticket => ticket.uuid === this.activeTicket)
-		
-		if (ticket == undefined)
-			throw new Error("Ticket not found")
-		
-		return ticket
+	private async _fetchTickets() {
+		const response = await fetch('http://localhost/api/tickets');
+		const json = await response.json();
+
+		if (!json || json === undefined)
+			throw Error(`Ticket nicht gefunden`);
+
+		try {
+			const tickets = json as Ticket[];
+			this.tickets = tickets;
+			// this.requestUpdate();
+		} catch(e) {
+			console.log(e);
+		}
+
+		console.log(await json, this.tickets);
+	}
+
+	public async createTicket(ticket: Ticket) {
+		const response = await fetch('http://localhost/api/ticket', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(ticket),
+		});
+
+		await response.json();
+
+		this._fetchTickets();
 	}
 
 	handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
-		this.activeTicket = e.detail.activeTicket;
+		const uuid = e.detail.activeTicket;
+		this.activeTicket = this.tickets.find( ticket => ticket.uuid === uuid);
+		console.log(this.activeTicket);
+	}
+
+	private _handleCreateTicketClicked(e: Event) {
+		this.createMode = !this.createMode;
 	}
 
 	render() {
 		return html`
-			<ticket-list 
-				.tickets='${this.tickets}'
-				@active-ticket-changed="${this.handleActiveTicketChanged}"
-			></ticket-list>
-			<ticket-detail .ticket='${this.getActiveTicket}'></ticket-detail>
+			<div>
+				<button @click="${this._handleCreateTicketClicked}">Neues Ticket erstellen</button>
+			</div>
+			<main>
+				<ticket-list 
+					.tickets='${this.tickets}'
+					@active-ticket-changed="${this.handleActiveTicketChanged}"
+				></ticket-list>
+				${when(!this.createMode,
+					() => html`
+						<ticket-detail 
+							.ticket='${this.activeTicket}'
+						></ticket-detail>`,
+					() => html`
+						<ticket-form .createTicket="${this.createTicket}">
+						</ticket-form>`
+				)}
+			</main>
 		`
 	}
 
 	static styles = css`
 		:host {
 			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			display: flex;
 			flex-direction: row;
 		}
-		:host > * {
+
+		main > * {
 			flex: 1; // gleiche breite
 			margin: 0.5em;
 			padding: 0.5em;
