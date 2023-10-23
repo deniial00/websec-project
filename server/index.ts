@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'Express';
+import express, { Request, Response } from 'express';
 import { Collection, MongoClient } from 'mongodb';
 import cors from 'cors';
 import bodyParser from 'body-parser';
