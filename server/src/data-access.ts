@@ -1,7 +1,7 @@
 import { Db, MongoClient } from 'mongodb';
 import { Collection } from 'mongodb';
 
-class DbAccess {
+export default class DbAccess {
 	private static db: Db | undefined;
 
 	static collection(input: string): Collection {
@@ -15,5 +15,3 @@ class DbAccess {
 		return this.db.collection(input);
 	}
 }
-
-export default DbAccess;

@@ -7,9 +7,14 @@ import { Ticket } from '../interfaces/ticket-interface'
 import '../components/ticket-detail-component';
 import '../components/ticket-list-component';
 import '../components/ticket-form-component';
+import { consume } from '@lit/context';
+import { Session, sessionContext } from '../contexts/auth-context';
 
 @customElement('tickets-page')
 export class TicketsPage extends LitElement {
+
+	@consume({ context: sessionContext, subscribe: true })
+	session: Session | undefined;
 
 	@property({type: Array})
 	tickets: Ticket[] = [];
@@ -26,6 +31,16 @@ export class TicketsPage extends LitElement {
 		super()
 		this._fetchTickets();
 		this.userId = '1';
+		//if (!this.session?.isLoggedIn)
+		//	this._handleChangePage('login-page');
+	}
+
+	private _handleChangePage = (new_page: string) => {
+		this.dispatchEvent(new CustomEvent('page-changed', {
+			detail: { new_page: new_page },
+			cancelable: true,
+			composed: true,
+		}));
 	}
 
 	private async _fetchTickets() {
@@ -38,7 +53,6 @@ export class TicketsPage extends LitElement {
 		try {
 			const tickets = json as Ticket[];
 			this.tickets = tickets;
-			// this.requestUpdate();
 		} catch(e) {
 			console.log(e);
 		}
@@ -46,7 +60,29 @@ export class TicketsPage extends LitElement {
 		console.log(await json, this.tickets);
 	}
 
-	public async createTicket(ticket: Ticket) {
+	private async _createTicket(e: { detail: { form: FormData } }) {
+
+		const title = e.detail.form.get('title');
+		const content = e.detail.form.get('content');
+
+		if (this.session === undefined)
+			throw Error("Keine aktive Session");
+
+		if (title === null || content === null)
+			throw Error("Titel oder Content nicht gesetzt");
+
+		const ticket: Ticket = {
+			author: {
+				name: 'Daniel Hofbauer',
+				uuid: this.session.uuid
+			},
+			creationDate: new Date(),
+			title: title.toString(),
+			content: content.toString(),
+			uuid: crypto.randomUUID(),
+			status: 'open'
+		};
+
 		const response = await fetch('http://localhost/api/ticket', {
 			method: 'POST',
 			headers: {
@@ -60,7 +96,7 @@ export class TicketsPage extends LitElement {
 		this._fetchTickets();
 	}
 
-	handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
+	private _handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
 		const uuid = e.detail.activeTicket;
 		this.activeTicket = this.tickets.find( ticket => ticket.uuid === uuid);
 		console.log(this.activeTicket);
@@ -78,7 +114,7 @@ export class TicketsPage extends LitElement {
 			<main>
 				<ticket-list 
 					.tickets='${this.tickets}'
-					@active-ticket-changed="${this.handleActiveTicketChanged}"
+					@active-ticket-changed="${this._handleActiveTicketChanged}"
 				></ticket-list>
 				${when(!this.createMode,
 					() => html`
@@ -86,7 +122,9 @@ export class TicketsPage extends LitElement {
 							.ticket='${this.activeTicket}'
 						></ticket-detail>`,
 					() => html`
-						<ticket-form .createTicket="${this.createTicket}">
+						<ticket-form
+							@create-ticket="${this._createTicket}"
+						>
 						</ticket-form>`
 				)}
 			</main>

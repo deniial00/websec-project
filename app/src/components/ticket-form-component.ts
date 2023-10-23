@@ -1,7 +1,8 @@
+import { consume } from '@lit/context';
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
-import { when } from 'lit/directives/when.js';
+import { sessionContext, Session } from '../contexts/auth-context';
 
 @customElement('ticket-form')
 export class TicketForm extends LitElement {
@@ -9,19 +10,28 @@ export class TicketForm extends LitElement {
 	@property({type: Object})
 	createTicket: Function | undefined;
 
+	@consume({ context: sessionContext, subscribe: true })
+	session : Session | undefined;
+
 	private _handleFormClick(e: Event) {
 		e.preventDefault();
 		const form = new FormData(e.currentTarget as HTMLFormElement);
-		console.log(form.getAll('title'));
+		
+		this.dispatchEvent(new CustomEvent('create-ticket',{ 
+				detail: { form },
+				cancelable: true,
+				composed: true,
+			})
+		);
 	}
 
 	render() {
 		return html`
 			<form @submit="${this._handleFormClick}">
 				<label for="title">Überschrift</label>
-				<input name="title"/>
+				<input name="title" required/>
 				<label for="content">Problembeschreibung</label>
-				<textarea  name="content">
+				<textarea  name="content" required>
 				</textarea>
 				<button  type="submit">Ticket erstellen</button>
 			</form>

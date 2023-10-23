@@ -1,14 +1,19 @@
 import { LitElement, css, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { consume } from '@lit/context';
-import { AuthContextValue } from '../interfaces/auth-interface';
-import { authContext } from '../contexts/auth-context';
+import { sessionContext, Session } from '../contexts/auth-context';
 
 @customElement('login-page')
 export class LoginPage extends LitElement {
+	constructor() {
+		super();
+		if (this.auth_context?.isLoggedIn){
+			this._handleChangePage("tickets-page");
+		}
+	}
 
-	@consume({ context: authContext, subscribe: true })
-	auth_context: AuthContextValue | undefined;
+	@consume({ context: sessionContext, subscribe: true })
+	auth_context: Session | undefined;
 
 	static styles = css`
 	:host {
@@ -25,15 +30,21 @@ export class LoginPage extends LitElement {
 	}
 	`
 
-	private _changeLoginStatus = () => {
-			this.dispatchEvent(new CustomEvent('login-status-changed', {
-				detail: { is_logged_in: !this.auth_context?.is_logged_in },
-				bubbles: true,
-				composed: true,
-			}));
+	private _changeAuthContext = (data: { uuid: string, username: string, token: string}) => {
+		sessionStorage.setItem("token", data.token);
+		this.dispatchEvent(new CustomEvent('login-status-changed', {
+			detail: { 
+				is_logged_in: !this.auth_context?.isLoggedIn,
+				uuid: data.uuid,
+				username: data.username,
+				token: data.token
+			},
+			bubbles: true,
+			composed: true,
+		}));
 	}
 
-	private _handleChangePage = (new_page: String) => {
+	private _handleChangePage = (new_page: string) => {
 		this.dispatchEvent(new CustomEvent('page-changed', {
 			detail: { new_page: new_page },
 			cancelable: true,
@@ -41,7 +52,7 @@ export class LoginPage extends LitElement {
 		}));
 	}
 
-	private _login = async () => {
+	private _login = async (e: Event) => {
 		try {
 			const usernameInput = this.shadowRoot?.getElementById('username') as HTMLInputElement;
 			const passwordInput = this.shadowRoot?.getElementById('password') as HTMLInputElement;
@@ -50,7 +61,7 @@ export class LoginPage extends LitElement {
 		
 			const data = { username, password };
 		
-			const response = await fetch('http://localhost:8000/api/login', {
+			const response = await fetch('http://localhost:80/api/login', {
 			  method: 'POST',
 			  headers: {
 				'Content-Type': 'application/json',
@@ -59,16 +70,15 @@ export class LoginPage extends LitElement {
 			});
 			const responseBody = await response.json();
 			if (response.ok) {
-				console.log(responseBody.status);
-			  this._changeLoginStatus();
-			  this._handleChangePage("tickets-page");
+			  await this._changeAuthContext(responseBody.data);
+			  await this._handleChangePage("tickets-page");
 			} else {
 			  // TODO: Handle errors
-			  console.log(response.status);
+			  console.log(responseBody.error);
 			  console.error('Login request failed');
 			}
 		  } catch (error) {
-			console.error('Error in _signup:', error);
+			console.error('Error in _login:', error);
 		  }
 	}
 

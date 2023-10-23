@@ -1,32 +1,68 @@
-import { MongoClient } from 'mongodb';
+import { Collection } from 'mongodb';
+import DbAccess from './data-access';
+import { password } from 'bun';
 
-export async function login(userData: JSON) {
-  try {
-    // Perform authentication logic here, such as verifying the user's credentials
-    // You might want to check a database or another authentication service.
-    // Example:
-    // const user = await getUserFromDatabase(userData.username);
-    // if (!user || !comparePassword(userData.password, user.password)) {
-    //   return "Login failed";
-    // }
+export default class AuthController {
 
-    // If authentication is successful, you can return a success message or a token.
-    // Example:
-    return "Login successful";
-  } catch (error) {
-    throw error; // You can handle errors more gracefully in your actual code.
+  private userCollection: Collection;
+
+  constructor() {
+    this.userCollection = DbAccess.collection('users');
   }
-}
 
-export async function signup(userData: JSON) {
-  try {
-    // Perform user registration logic here, such as creating a new user in the database.
-    // Example:
-    // await createUserInDatabase(userData);
+  public login = async (data: { username: string, password: string}) => {
+    try {
+      const user = await this.userCollection.findOne({ username: data.username });
+      
+      if (user) {
+        if (user.password === data.password) {
+          const token = this.generateToken(data.username, data.password);
+          return { username: user.username, uuid: user.uuid, token };
+        }
+        else {
+          console.error("Wrong password");
+          throw new Error("Wrong password");
+        }        
+      } else {
+        console.error("User does not exist");
+        throw new Error("User does not exist");
+      }
+    } catch (error) {
+      throw error; // You can handle errors more gracefully in your actual code.
+    }
+  }
+  
 
-    // Return a success message upon successful registration.
-    return "Signup successful";
-  } catch (error) {
-    throw error; // You can handle errors more gracefully in your actual code.
+
+  public signup = async (data: { username: string, email: string, password: string}) => {
+    try {
+
+      const duplicateUser = await this.userCollection.findOne({ username: data.username });
+
+      const user = {
+        username: data.username,
+        email: data.email,
+        password: data.password
+      };
+      
+      if(!duplicateUser){
+        const result = await this.userCollection.insertOne(user);
+
+        if (!result.acknowledged)
+			    return { error: "Could not sign up user" };
+
+        return { uuid: result.insertedId }
+      }
+      
+      else {
+        throw new Error("User does already exist");
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private generateToken = (username: string, password: string) => {
+    return username+password;
   }
 }

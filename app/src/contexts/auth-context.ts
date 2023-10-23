@@ -1,5 +1,4 @@
-import { createContext } from '@lit/context';
-import { AuthContextValue } from '../interfaces/auth-interface';
-export const authContext = createContext<AuthContextValue>(Symbol('auth-context'));
-
- 
+import {createContext} from '@lit/context';
+import type { Session } from '../interfaces/session-interface';
+export type { Session } from '../interfaces/session-interface';
+export const sessionContext = createContext<Session>('session');
