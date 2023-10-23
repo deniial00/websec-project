@@ -19,11 +19,11 @@ export class TicketsPage extends LitElement {
 
 	constructor() {
 		super()
-		this.fetchTickets();
+		this._fetchTickets();
 		this.userId = '1';
 	}
 
-	private async fetchTickets() {
+	private async _fetchTickets() {
 		const response = await fetch('http://localhost/api/tickets');
 		const json = await response.json();
 
@@ -33,8 +33,22 @@ export class TicketsPage extends LitElement {
 		try {
 			this.tickets = await response.json() as Ticket[];
 		} catch(e) {
-			
+
 		}
+	}
+
+	public async createTicket(ticket: Ticket) {
+		const response = await fetch('http://localhost/api/ticket', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(ticket),
+		});
+
+		await response.json();
+
+		this._fetchTickets();
 	}
 
 	handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
@@ -49,7 +63,9 @@ export class TicketsPage extends LitElement {
 				.tickets='${this.tickets}'
 				@active-ticket-changed="${this.handleActiveTicketChanged}"
 			></ticket-list>
-			<ticket-detail .ticket='${this.activeTicket}'></ticket-detail>
+			<ticket-detail 
+				.ticket='${this.activeTicket}'
+			></ticket-detail>
 		`
 	}
 
