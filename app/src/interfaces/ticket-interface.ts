@@ -1,7 +1,7 @@
 interface Ticket {
 	_id?: string
 	author: {
-		name: string;
+		name: string | undefined;
 		uuid: string;
 	},
 	creationDate: Date;

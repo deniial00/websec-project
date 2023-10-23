@@ -20,9 +20,6 @@ export class LoginPage extends LitElement {
 		color: black;
 	}
 
-	:host div {
-	}
-
 	.signup_link {
 		cursor: pointer;
 		color: darkblue;
@@ -31,10 +28,11 @@ export class LoginPage extends LitElement {
 	`
 
 	private _changeAuthContext = (data: { uuid: string, username: string, token: string}) => {
+		console.log(data);
 		sessionStorage.setItem("token", data.token);
 		this.dispatchEvent(new CustomEvent('login-status-changed', {
 			detail: { 
-				is_logged_in: !this.auth_context?.isLoggedIn,
+				isLoggedIn: !this.auth_context?.isLoggedIn,
 				uuid: data.uuid,
 				username: data.username,
 				token: data.token
@@ -69,6 +67,8 @@ export class LoginPage extends LitElement {
 			  body: JSON.stringify({ data }),
 			});
 			const responseBody = await response.json();
+
+			console.log(responseBody.data);// {data:{}}
 			if (response.ok) {
 			  await this._changeAuthContext(responseBody.data);
 			  await this._handleChangePage("tickets-page");
@@ -89,7 +89,7 @@ export class LoginPage extends LitElement {
 					<h1>Login</h1>
 					<div>
 						<div>
-							<input id="username" type="text" placeholder="Username" autocomplete="nope">
+							<input id="username" type="text" placeholder="Username" !autocomplete="nope">
 						</div>
 						<div>
 							<input id="password" type="password" placeholder="Password" autocomplete="new-password">

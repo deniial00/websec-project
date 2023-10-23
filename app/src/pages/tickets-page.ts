@@ -14,7 +14,7 @@ import { Session, sessionContext } from '../contexts/auth-context';
 export class TicketsPage extends LitElement {
 
 	@consume({ context: sessionContext, subscribe: true })
-	session: Session | undefined;
+  	session: Session | undefined;
 
 	@property({type: Array})
 	tickets: Ticket[] = [];
@@ -31,16 +31,6 @@ export class TicketsPage extends LitElement {
 		super()
 		this._fetchTickets();
 		this.userId = '1';
-		//if (!this.session?.isLoggedIn)
-		//	this._handleChangePage('login-page');
-	}
-
-	private _handleChangePage = (new_page: string) => {
-		this.dispatchEvent(new CustomEvent('page-changed', {
-			detail: { new_page: new_page },
-			cancelable: true,
-			composed: true,
-		}));
 	}
 
 	private async _fetchTickets() {
@@ -71,9 +61,10 @@ export class TicketsPage extends LitElement {
 		if (title === null || content === null)
 			throw Error("Titel oder Content nicht gesetzt");
 
+		console.log(this.session);
 		const ticket: Ticket = {
 			author: {
-				name: 'Daniel Hofbauer',
+				name: this.session.username,
 				uuid: this.session.uuid
 			},
 			creationDate: new Date(),
@@ -82,7 +73,7 @@ export class TicketsPage extends LitElement {
 			uuid: crypto.randomUUID(),
 			status: 'open'
 		};
-
+		console.log(ticket, this.session);
 		const response = await fetch('http://localhost/api/ticket', {
 			method: 'POST',
 			headers: {
@@ -94,6 +85,7 @@ export class TicketsPage extends LitElement {
 		await response.json();
 
 		this._fetchTickets();
+		this.createMode = !this.createMode;
 	}
 
 	private _handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
@@ -104,7 +96,6 @@ export class TicketsPage extends LitElement {
 
 	private _handleCreateTicketClicked(e: Event) {
 		this.createMode = !this.createMode;
-		e.preventDefault();
 	}
 
 	render() {

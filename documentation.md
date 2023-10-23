@@ -1,12 +1,25 @@
 # WebSec-Dokumentation
 
-Die WebSec-Anwendung ist eine Webanwendung, die es Benutzern ermöglicht, Tickets zu erstellen, anzuzeigen und zu verwalten. Die Anwendung ermöglicht die Registrierung von Benutzern, die Authentifizierung von Benutzern sowie die Interaktion mit Tickets.
+Die WebSec-Anwendung ist ein webbasiertes System, das Benutzern die Möglichkeit bietet, Tickets zu erstellen, anzuzeigen und zu verwalten. Die Anwendung umfasst Funktionen wie die Benutzerregistrierung, Benutzerauthentifizierung und die Bearbeitung von Tickets.
+
+## OWASP TOP 10 Sicherheitslücken
+
+### Insecure Design
+1. **Cross-Origin-Schwachstelle (Cross-Origin)**: Die Anwendung zeigt eine Schwäche im Umgang mit Cross-Origin-Anfragen, was zu einem erhöhten Risiko von Angriffen durch böswillige Skripte aus anderen Quellen führen kann.
+2. **Schwache Token-Generierung (Benutzername + Passwort)**: Die Art und Weise, wie die Anwendung Tokens generiert, ist unsicher, da sensible Informationen wie Benutzernamen und Passwörter kombiniert werden, was ein Sicherheitsrisiko darstellt.
+3. **Fehlende Passwortrichtlinie**: Die Anwendung verfügt nicht über angemessene Passwortrichtlinien, wie beispielsweise Mindestzeichenanforderungen oder Komplexitätsanforderungen, was sie anfällig für Brute-Force-Angriffe und andere Passwort-basierte Angriffe macht.
+
+### Security logging and Monitory failures
+Die Sicherheitsmechanismen für das Protokollieren und Überwachen in der WebSec-Anwendung weisen Mängel auf, wodurch potenzielle Sicherheitsverletzungen oder ungewöhnliche Aktivitäten möglicherweise nicht rechtzeitig erkannt und protokolliert werden. Diese Schwachstelle könnte zu einer verminderten Fähigkeit führen, auf Sicherheitsbedrohungen angemessen zu reagieren und diese zu beheben, was letztendlich die Sicherheit und Integrität der Anwendung gefährden könnte.
+
+### Broken Access Controll
+Die Anwendung weist Schwächen in der Zugriffskontrolle auf, was potenziell unzureichende Mechanismen zur Steuerung und Beschränkung des Zugriffs auf bestimmte Ressourcen und Funktionen der Anwendung bedeutet. Dies könnte dazu führen, dass nicht autorisierte Benutzer unangemessenen Zugriff auf vertrauliche Daten oder Funktionalitäten erlangen und unerwünschte Änderungen vornehmen können, was die Integrität und Sicherheit der Anwendung gefährdet. Es ist wichtig, angemessene Zugriffskontrollmechanismen zu implementieren, um die Vertraulichkeit und Integrität der Anwendung zu gewährleisten.
 
 ## Verwendete Technologien
 
 In diesem faszinierenden Projekt haben wir bewusst auf Technologien gesetzt, die uns bisher weniger vertraut waren. Daher war es eine aufregende Gelegenheit, erstens TypeScript in unsere Entwicklungspraxis zu integrieren. Die Entscheidung fiel auf TypeScript, um die Robustheit und Wartbarkeit unserer Anwendung zu verbessern. Zweitens haben wir uns für den Einsatz einer NoSQL-Datenbank entschieden, um die Flexibilität und Skalierbarkeit unserer Datenspeicherung zu erweitern. Diese Wahl ermöglicht es uns, komplexe Datenstrukturen effizient zu handhaben und zu verwalten. Schließlich haben wir einen Reverse-Proxy in unsere Architektur integriert, um den Datenverkehr zu steuern und eine effiziente Verteilung zwischen verschiedenen Anwendungskomponenten zu gewährleisten.
 
-Im Frontend, das die App darstellt, kommen die folgenden Technologien zum Einsatz: 
+Im Frontend, kommen die folgenden Technologien zum Einsatz: 
 
 - **Lit Element**: Ein modernes, leichtgewichtiges JavaScript-Framework zur Erstellung von Webkomponenten, das auf Webstandards wie Custom Elements, Shadow DOM und ES Modules basiert.
 - **Node.js**: Eine JavaScript-Laufzeitumgebung, die es ermöglicht, JavaScript-Code außerhalb eines Browsers auszuführen.

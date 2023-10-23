@@ -72,9 +72,9 @@ app.get("/api/tickets", async (req: Request, res: Response) => {
 app.post("/api/signup", async (req: Request, res: Response) => {
   try {
     console.log(req.body.data);
-    const result = await new AuthController().signup(req.body.data);
-    const result2 = await new AuthController().login(req.body.data);
-    res.status(200).json({ data: result2 });
+    await new AuthController().signup(req.body.data);
+    const result = await new AuthController().login(req.body.data);
+    res.status(200).json({ data: result });
   } catch (error) {
     res.status(500).json({ error: "An error occurred while processing the request" });
   }
@@ -84,8 +84,10 @@ app.post("/api/login", async (req: Request, res: Response) => {
   try {
     console.log(req.body.data);
     const result = await new AuthController().login(req.body.data);
+    console.log(result);
     res.status(200).json({ data: result });
   } catch (error) {
+    // console.log(error);
     res.status(500).json({ error: error });
   }
 });

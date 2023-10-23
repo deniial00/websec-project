@@ -15,9 +15,6 @@ export class SignupPage extends LitElement {
 		color: black;
 	}
 
-	:host div {
-	}
-
 	.login_link {
 		cursor: pointer;
 		color: darkblue;
@@ -63,7 +60,6 @@ export class SignupPage extends LitElement {
 		  const responseBody = await response.json();
 		  if (response.ok) {
 			console.log(responseBody.data);
-			// {uuid: '6536a6c84b80eed6eaea4d91'}
 			this._changeAuthContext(responseBody.data);
 			this._handleChangePage("tickets-page");
 		  } else {
@@ -84,10 +80,10 @@ export class SignupPage extends LitElement {
 				<h1>Sign up</h1>
 				<div class="content">
 					<div class="input-field">
-						<input id="username" type="text" placeholder="Username" autocomplete="nope">
+						<input id="username" type="text" placeholder="Username" !autocomplete="nope">
 					</div>
 					<div class="input-field">
-						<input id="email" type="text" placeholder="Email" autocomplete="nope">
+						<input id="email" type="text" placeholder="Email" !autocomplete="nope">
 					</div>
 					<div class="input-field">
 						<input type="password" placeholder="Password" autocomplete="new-password">

@@ -12,11 +12,13 @@ export default class AuthController {
 
   public login = async (data: { username: string, password: string}) => {
     try {
+      console.log("login");
       const user = await this.userCollection.findOne({ username: data.username });
-      
+      console.log(user);
       if (user) {
         if (user.password === data.password) {
           const token = this.generateToken(data.username, data.password);
+          console.log("ret");
           return { username: user.username, uuid: user.uuid, token };
         }
         else {
@@ -28,6 +30,7 @@ export default class AuthController {
         throw new Error("User does not exist");
       }
     } catch (error) {
+      console.log("error");
       throw error; // You can handle errors more gracefully in your actual code.
     }
   }
@@ -36,13 +39,13 @@ export default class AuthController {
 
   public signup = async (data: { username: string, email: string, password: string}) => {
     try {
-
       const duplicateUser = await this.userCollection.findOne({ username: data.username });
 
       const user = {
         username: data.username,
         email: data.email,
-        password: data.password
+        password: data.password,
+        uuid: crypto.randomUUID()
       };
       
       if(!duplicateUser){

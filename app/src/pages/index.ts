@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html } from 'lit'
+import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { provide } from '@lit/context';
 import { sessionContext, Session } from '../contexts/auth-context';
@@ -14,35 +14,25 @@ import { choose } from 'lit/directives/choose.js';
 
 @customElement('app-page')
 export class App extends LitElement {
-	constructor() {
-		super();
-		this.selectedPage = 'login-page';
-		// this.selected_page = this.auth_context.isLoggedIn ? this.available_pages["tickets-page"] : this.available_pages["login-page"];
-	}
-
 
 	@provide({context: sessionContext})
-	private auth_context: Session = {
-		uuid: '',
-		isLoggedIn: false,
-		username: undefined,
-		token: undefined
-	}
+	private session: Session;
 
-	// @property({type: Array})
-	// available_pages: Record<string, TemplateResult> = {
-	// 	"signup-page": html `<signup-page @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></signup-page>`,
-	// 	"login-page": html `<login-page  @login-status-changed="${this.onLoginStatusChanged}" @page-changed="${this.onPageChanged}"></login-page>`,
-	// 	"tickets-page": html `<tickets-page></tickets-page>`,
-	// 	"profile-page": html `<profile-page></profile-page>`,
-	// };
 
-	// @property({ type: Object })
-	// selected_page;
-	
 	@property({ type: String })
 	selectedPage = "login-page";
 
+	constructor() {
+		super();
+		this.session = {
+			uuid: '',
+			isLoggedIn: false,
+			username: undefined,
+			token: undefined
+		};
+		this.selectedPage = 'login-page';
+	}
+	
 	static styles = css`
 		:host {
 			min-height: 100vh;
@@ -56,16 +46,16 @@ export class App extends LitElement {
 		}
 	`
 
-	private onLoginStatusChanged(event: { detail: { is_logged_in: boolean } }) {
-		this.auth_context.isLoggedIn = event.detail.is_logged_in;
+	private onLoginStatusChanged(event: { detail: { isLoggedIn: boolean, uuid: string, username: string, token: string } }) {
+		console.log(event.detail);
+		this.session = event.detail;
 		this.requestUpdate();
 	}
 
 	private onPageChanged(event: { detail: { new_page: string } }) {
-		// this.selected_page = this.available_pages[event.detail.new_page];
 		this.selectedPage = event.detail.new_page;
 		console.log(event.detail.new_page, this.selectedPage);
-		// this.requestUpdate();
+		this.requestUpdate();
 	}
 
 
@@ -73,7 +63,7 @@ export class App extends LitElement {
 		super.connectedCallback();
 		const token = sessionStorage.getItem("token");
 		if (token) {
-			this.auth_context.isLoggedIn = true;
+			this.session.isLoggedIn = true;
 			await this.updateComplete;
 			this.selectedPage = 'tickets-page';
 		}
@@ -90,7 +80,6 @@ export class App extends LitElement {
 				></navbar-component>
 			</header>
 			<div class="main-content">
-				<!-- ${html `${this.selectedPage}`} -->
 				${choose(this.selectedPage, [
 					['tickets-page', () => html`<tickets-page @page-changed="${this.onPageChanged}"></tickets-page>`],
 					['profile-page', () => html`<profile-page></profile-page>`],
