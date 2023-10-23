@@ -7,7 +7,6 @@ import { when } from 'lit/directives/when.js';
 @customElement('ticket-detail')
 export class TicketDetail extends LitElement {
 
-	// ! to turn off error for undefined ticket var
 	@property({type: Object})
 	ticket: Ticket | undefined;
 
@@ -28,7 +27,13 @@ export class TicketDetail extends LitElement {
 	}
 
 	static styles = css`
- 
+		:host > div {
+			background-color: grey;
+			border-color: lightgray;
+			border-radius: 0.3em;
+			margin: 0.5em 0 0.5em 0;
+			padding: 0.5em;
+		}
 	`
 }
 

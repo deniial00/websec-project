@@ -1,10 +1,12 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { when } from 'lit/directives/when.js';
 
 import { Ticket } from '../interfaces/ticket-interface'
 
 import '../components/ticket-detail-component';
 import '../components/ticket-list-component';
+import '../components/ticket-form-component';
 
 @customElement('tickets-page')
 export class TicketsPage extends LitElement {
@@ -14,6 +16,9 @@ export class TicketsPage extends LitElement {
 
 	@property({type: Object})
 	activeTicket: Ticket | undefined;
+
+	@property({type: Boolean})
+	createMode = false;
 
 	userId: string;
 
@@ -31,10 +36,14 @@ export class TicketsPage extends LitElement {
 			throw Error(`Ticket nicht gefunden`);
 
 		try {
-			this.tickets = await response.json() as Ticket[];
+			const tickets = json as Ticket[];
+			this.tickets = tickets;
+			// this.requestUpdate();
 		} catch(e) {
-
+			console.log(e);
 		}
+
+		console.log(await json, this.tickets);
 	}
 
 	public async createTicket(ticket: Ticket) {
@@ -57,24 +66,45 @@ export class TicketsPage extends LitElement {
 		console.log(this.activeTicket);
 	}
 
+	private _handleCreateTicketClicked(e: Event) {
+		this.createMode = !this.createMode;
+	}
+
 	render() {
 		return html`
-			<ticket-list 
-				.tickets='${this.tickets}'
-				@active-ticket-changed="${this.handleActiveTicketChanged}"
-			></ticket-list>
-			<ticket-detail 
-				.ticket='${this.activeTicket}'
-			></ticket-detail>
+			<div>
+				<button @click="${this._handleCreateTicketClicked}">Neues Ticket erstellen</button>
+			</div>
+			<main>
+				<ticket-list 
+					.tickets='${this.tickets}'
+					@active-ticket-changed="${this.handleActiveTicketChanged}"
+				></ticket-list>
+				${when(!this.createMode,
+					() => html`
+						<ticket-detail 
+							.ticket='${this.activeTicket}'
+						></ticket-detail>`,
+					() => html`
+						<ticket-form .createTicket="${this.createTicket}">
+						</ticket-form>`
+				)}
+			</main>
 		`
 	}
 
 	static styles = css`
 		:host {
 			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			display: flex;
 			flex-direction: row;
 		}
-		:host > * {
+
+		main > * {
 			flex: 1; // gleiche breite
 			margin: 0.5em;
 			padding: 0.5em;
