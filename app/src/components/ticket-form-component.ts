@@ -1,8 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
-import { when } from 'lit/directives/when.js';
-
 @customElement('ticket-form')
 export class TicketForm extends LitElement {
 

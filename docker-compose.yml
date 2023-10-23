@@ -33,15 +33,15 @@ services:
     networks:
       - default
       - database
-  frontend:
-    container_name: websec-frontend
-    image: node:latest
-    working_dir: /app
-    command: >
-      sh -c "npm install &&
-             npm run docker"
-    volumes:
-      - ./app:/app
+  # frontend:
+  #   container_name: websec-frontend
+  #   image: node:latest
+  #   working_dir: /app
+  #   command: >
+  #     sh -c "npm install &&
+  #            npm run docker"
+  #   volumes:
+  #     - ./app:/app
 volumes:
   proxy:
     driver: local
