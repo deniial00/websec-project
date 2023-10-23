@@ -1,4 +1,5 @@
 interface Ticket {
+	_id?: string
 	author: {
 		name: string;
 		uuid: string;

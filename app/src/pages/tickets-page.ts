@@ -104,6 +104,7 @@ export class TicketsPage extends LitElement {
 
 	private _handleCreateTicketClicked(e: Event) {
 		this.createMode = !this.createMode;
+		e.preventDefault();
 	}
 
 	render() {
