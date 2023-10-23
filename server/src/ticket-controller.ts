@@ -1,23 +1,43 @@
-import { Collection } from 'mongoose';
+import { Collection } from 'mongodb';
 
-import db from './data-access';
-import TicketModel from './schemes/ticket-schema';
 import { Ticket } from './interfaces/ticket-interface';
-import { Db, Document } from 'mongodb';
+import DbAccess from './data-access';
 export default class TicketController {
     
-	private db:Db;
+	private ticketCollection: Collection;
 
 	constructor() {
 		console.log("ticket-controller: init");
-		this.db = db.connection;
+		this.ticketCollection = DbAccess.collection('tickets');
 	  
 	}
 
-	// public GetUser(input: string): Ticket {
-	// 	let ticket: Ticket = this.db.collection('tickets').findOne<Ticket>({uuid: input});
+	public async getTicket(uuid: string): Promise<Ticket> {
+		const ticket: Ticket | null = await this.ticketCollection.findOne<Ticket>({ uuid });
+
+		if (ticket === null)
+			throw Error(`Ticket mit uuid ${uuid} nicht gefunden`);
+
+		return ticket;
+	}
+
+	public async getTickets(): Promise<Ticket[]> {
+		const cursor = await this.ticketCollection.find<Ticket>({});
+		const tickets = await cursor.toArray();
 		
-	// 	return ticket;
-	// }
+		if (tickets === null || tickets.length === 0)
+			throw Error(`Tickets nicht gefunden`);
+
+		return tickets;
+	}
+
+	public async createTicket(ticket: Ticket) {
+		const ret = await this.ticketCollection.insertOne(ticket);
+
+		if (!ret.acknowledged)
+			throw Error(`Ticket konnte nicht erstellt werden. data: ${JSON.stringify(ticket)}`);
+
+		return { uuid: ret.insertedId }
+	}
 
 }
