@@ -174,13 +174,13 @@ export class TicketsPage extends LitElement {
 		}
 		
 		button:hover {
-			filter: brightness(0.75);
+			/* filter: brightness(0.75); */
 			/* background-color: rgb(244,50,48); */
 			color: black;
 		}
 
 		.cancel {
-			background-color: rgb(254,92,92);
+			background-color: rgb(229,77,44);
 		}`
 		
 	];

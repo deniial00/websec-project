@@ -44,12 +44,16 @@ export class NavbarComponent extends LitElement {
       align-items: center; /* vertical alignment of divs in parent */
       cursor: pointer; /* damit es wie ein link wirkt */
       margin: 0 2em;
+      font-weight: bold;
     }
 
-    :host > *:hover {
-      color: red;
+    :host > div:hover {
+      color: rgb(229,77,44);
     }
-  `;
+
+    :host > img:hover {
+      filter: invert(24%) sepia(91%) saturate(6565%) hue-rotate(355deg) brightness(90%) contrast(120%);
+     }`;
 
   render() {
 		return html`
