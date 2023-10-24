@@ -17,9 +17,11 @@ export class TicketDetail extends LitElement {
 	render() {
 		return when(this.ticket,
 			() => html`
-					<div>${this.ticket!.title}</div>
-					<div>${this.ticket!.author.name} am ${new Date(this.ticket!.creationDate).toLocaleDateString('de-DE')}</div>
-					<div>${this.ticket!.content}</div>
+					<div>
+						<div>${this.ticket!.title}</div>
+						<div>${this.ticket!.author.name} am ${new Date(this.ticket!.creationDate).toLocaleDateString('de-DE')}</div>
+						<div>${this.ticket!.content}</div>
+					</div>
 			`,
 			() => html`<div>Wähle ein Ticket aus</div>`
 		)

@@ -9,6 +9,7 @@ import '../components/ticket-list-component';
 import '../components/ticket-form-component';
 import { consume } from '@lit/context';
 import { Session, sessionContext } from '../contexts/auth-context';
+import defaultStyles from '../styles';
 
 @customElement('tickets-page')
 export class TicketsPage extends LitElement {
@@ -85,7 +86,7 @@ export class TicketsPage extends LitElement {
 		await response.json();
 
 		this._fetchTickets();
-		this.createMode = !this.createMode;
+		this._handleCreateTicketClicked()
 	}
 
 	private _handleActiveTicketChanged(e: { detail: { activeTicket: string} }) {
@@ -94,7 +95,20 @@ export class TicketsPage extends LitElement {
 		console.log(this.activeTicket);
 	}
 
-	private _handleCreateTicketClicked(e: Event) {
+	private _handleCreateTicketClicked() {	
+		const button = this.renderRoot.querySelector<HTMLButtonElement>("button");
+		
+		if (!button)
+			throw Error("Button not found");
+
+		if (this.createMode) {
+			button.textContent = "Neues Ticket erstellen" 
+			button.classList.remove('cancel');
+		} else {
+			button.textContent = "Abbrechen";
+			button.classList.add('cancel');
+		}
+
 		this.createMode = !this.createMode;
 	}
 
@@ -123,23 +137,53 @@ export class TicketsPage extends LitElement {
 		`
 	}
 
-	static styles = css`
+	static styles = [
+		defaultStyles,
+		css`
 		:host {
 			display: flex;
 			flex-direction: column;
 		}
 
+		:host > * {
+			margin: 0 1em;
+		}
+
 		main {
 			display: flex;
 			flex-direction: row;
+			gap: 1em;
 		}
 
 		main > * {
 			flex: 1; // gleiche breite
-			margin: 0.5em;
 			padding: 0.5em;
 		}
-	`;
+
+		button {
+			border: unset;
+			border: darkgray 2px solid;
+			background-color: white;
+			color: darkgray;
+			width: 100%;
+			height: 2em;
+			border-radius: 5px;
+			cursor: pointer;
+			font-weight: bold;
+			margin: 1em 0;
+		}
+		
+		button:hover {
+			filter: brightness(0.75);
+			/* background-color: rgb(244,50,48); */
+			color: black;
+		}
+
+		.cancel {
+			background-color: rgb(254,92,92);
+		}`
+		
+	];
 }
 
 declare global {

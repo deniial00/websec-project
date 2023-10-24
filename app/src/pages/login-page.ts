@@ -29,7 +29,7 @@ export class LoginPage extends LitElement {
 
 	private _changeAuthContext = (data: { uuid: string, username: string, token: string}) => {
 		console.log(data);
-		sessionStorage.setItem("token", data.token);
+		sessionStorage.setItem("session", JSON.stringify({...data, isLoggedIn: true}));
 		this.dispatchEvent(new CustomEvent('login-status-changed', {
 			detail: { 
 				isLoggedIn: !this.auth_context?.isLoggedIn,

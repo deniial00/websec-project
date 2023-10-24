@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import { map } from 'lit/directives/map.js';
 
 import { Ticket } from '../interfaces/ticket-interface'
-
+import defaultStyles from '../styles';
 
 @customElement('ticket-list')
 export class TicketList extends LitElement {
@@ -32,23 +32,24 @@ export class TicketList extends LitElement {
 		}
 
 		return html`
-			<div>Deine Tickets</div>
 			${map(this.tickets, ticket => 
 				html`
-				<div 
+				<div
 					class="ticket-list-element"
 					@click="${this.handleTicketClick}"
 					data-uuid="${ticket.uuid}"
 					role="button"
 				>
 					<div>${ticket.title}</div>
-					<div>${ticket.author.name}</div>
+					<div>${ticket.author.name} am ${new Date(ticket.creationDate).toLocaleDateString('de-DE')}</div>
 				</div>`
 			)}
 		`
 	}
 
-	static styles = css`
+	static styles = [
+		defaultStyles,
+		css`
 		.ticket-list-element {
 			background-color: grey;
 			border-color: lightgray;
@@ -57,7 +58,11 @@ export class TicketList extends LitElement {
 			padding: 0.5em;
 			cursor: pointer;
 		}
-	`
+		
+		.ticket-list-element:hover {
+			background-color: darkgray;
+		}`
+	]
 }
 
 declare global {
