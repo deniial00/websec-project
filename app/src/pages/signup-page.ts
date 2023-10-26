@@ -10,18 +10,6 @@ export class SignupPage extends LitElement {
 	@consume({ context: sessionContext, subscribe: true })
 	auth_context: Session | undefined;
 
-	static styles = css`
-	:host {
-		color: black;
-	}
-
-	.login_link {
-		cursor: pointer;
-		color: darkblue;
-		text-decoration: underline;
-	}
-	`
-
 	private _changeAuthContext = (data: { uuid: string, username: string, token: string}) => {
 		sessionStorage.setItem("token", data.token);
 		this.dispatchEvent(new CustomEvent('login-status-changed', {
@@ -91,7 +79,8 @@ export class SignupPage extends LitElement {
 					<div class="input-field">
 						<input id="password" type="password" placeholder="Confirm Password" autocomplete="new-password">
 					</div>
-					Already have an Account? <span class="login_link" @click=${() => {this._handleChangePage("login-page");}}>Login</span>
+					Already have an Account?
+					<span class="login_link" @click=${() => {this._handleChangePage("login-page");}}>Login</span>
 					</div>
 				<div class="action">
 					<button @click=${this._signup}>Sign up</button>
@@ -100,6 +89,22 @@ export class SignupPage extends LitElement {
 		</div>
 		`
 	}
+
+	static styles = css`
+		:host {
+			color: black;
+		}
+		.signup-form {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.login_link {
+			cursor: pointer;
+			color: darkblue;
+			text-decoration: underline;
+		}`
 }
 
 declare global {

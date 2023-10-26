@@ -3,9 +3,6 @@ import { Collection, MongoClient } from 'mongodb';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-
-const authController = require('./src/auth-controller');
-import DbAccess from './src/data-access'
 import { Ticket } from './src/interfaces/ticket-interface';
 import TicketController from './src/ticket-controller';
 import AuthController from './src/auth-controller';

@@ -11,7 +11,7 @@ export class NavbarComponent extends LitElement {
   auth_context: Session | undefined;
 
   private _changeLoginStatus = () => {
-      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("session");
       this.dispatchEvent(new CustomEvent('login-status-changed', {
         detail: { is_logged_in: !this.auth_context?.isLoggedIn },
         bubbles: true,
@@ -57,7 +57,7 @@ export class NavbarComponent extends LitElement {
 
   render() {
 		return html`
-      <img src="/public/suppord-logo.png" />
+      <img src="/suppord-logo.png" />
 			<!-- <div @click="${() => {this._handleChangePage("profile-page");}}">Profile</div> -->
 			${when(this.auth_context?.isLoggedIn, 
         () => html`

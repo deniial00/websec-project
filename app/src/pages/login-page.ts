@@ -15,18 +15,6 @@ export class LoginPage extends LitElement {
 	@consume({ context: sessionContext, subscribe: true })
 	auth_context: Session | undefined;
 
-	static styles = css`
-	:host {
-		color: black;
-	}
-
-	.signup_link {
-		cursor: pointer;
-		color: darkblue;
-		text-decoration: underline;
-	}
-	`
-
 	private _changeAuthContext = (data: { uuid: string, username: string, token: string}) => {
 		console.log(data);
 		sessionStorage.setItem("session", JSON.stringify({...data, isLoggedIn: true}));
@@ -103,6 +91,23 @@ export class LoginPage extends LitElement {
 			</div>
 		`
 	}
+
+	static styles = css`
+		:host {
+			color: black;
+		}
+
+		.login-form {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.signup_link {
+			cursor: pointer;
+			color: darkblue;
+			text-decoration: underline;
+		}`
 }
 
 declare global {
